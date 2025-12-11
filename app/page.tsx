@@ -350,10 +350,10 @@ export default function CalibratePage() {
       {/* Red flash overlay */}
       {showRedFlash && (
         <div 
-          className="absolute inset-0 bg-red-600 z-50" 
+          className="absolute inset-0 bg-red-700 z-50" 
           style={{ 
-            animation: "redFlash 200ms ease-in-out infinite",
-            opacity: 0.95
+            animation: "redFlash 500ms ease-in-out infinite",
+            opacity: 0.4
           }} 
         />
       )}
