@@ -128,12 +128,17 @@ export default function CalibratePage() {
       const data = await response.json();
       
       if (!response.ok) {
-        console.error("Failed to upload image:", data.error || "Unknown error");
+        console.error("Failed to upload image:", data);
+        // Show error to user
+        if (data.error) {
+          alert(`Upload failed: ${data.error}`);
+        }
       } else {
         console.log("Image uploaded successfully:", data.filename);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
+      alert(`Upload error: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   }, [getEyeRegion]);
 

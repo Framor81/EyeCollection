@@ -60,6 +60,23 @@ export async function POST(req: NextRequest) {
 
     console.log("Buffer size:", buffer.length);
 
+    // Check if bucket exists and is accessible
+    const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
+    
+    if (bucketError) {
+      console.error("Error listing buckets:", bucketError);
+    } else {
+      console.log("Available buckets:", buckets?.map(b => b.name));
+      const calibrationBucket = buckets?.find(b => b.name === "calibration");
+      if (!calibrationBucket) {
+        console.error("Bucket 'calibration' not found. Available buckets:", buckets?.map(b => b.name));
+        return NextResponse.json({ 
+          error: "Storage bucket 'calibration' not found. Please create it in Supabase dashboard.",
+          availableBuckets: buckets?.map(b => b.name)
+        }, { status: 500 });
+      }
+    }
+
     const { data, error } = await supabase.storage
       .from("calibration")
       .upload(filename, buffer, {
@@ -69,9 +86,12 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Supabase upload error:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
       return NextResponse.json({ 
         error: error.message,
-        details: error 
+        errorName: error.name,
+        details: error,
+        filename: filename
       }, { status: 500 });
     }
 
