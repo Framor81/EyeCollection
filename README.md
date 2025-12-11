@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gaze Calibration Collector
+
+A mobile-optimized web app for collecting eye gaze calibration data. Captures images of users looking in different directions and uploads them to Supabase Storage.
+
+## Features
+
+- 📱 Mobile and desktop optimized
+- 📸 Automatic image capture (2 frames per direction)
+- ☁️ Supabase Storage integration
+- 🎯 Six-direction calibration (up, down, left, right, straight, closed)
+- 🌙 Dark mode UI
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- Supabase account with a storage bucket named `calibration`
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Create a `.env` file in the root directory:
+```
+SUPABASE_URL=your_supabase_url
+SUPABASE_SECRET_KEY=your_service_role_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-## Learn More
+## Supabase Setup
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a storage bucket named `calibration` in your Supabase dashboard
+2. Set the bucket to public or configure appropriate policies
+3. Add your Supabase URL and service role key to `.env`
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Option 1: Deploy via Vercel Dashboard (Recommended)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to GitHub:
+```bash
+git remote add origin <your-github-repo-url>
+git push -u origin master
+```
+
+2. Go to [vercel.com](https://vercel.com) and sign in
+3. Click "New Project"
+4. Import your GitHub repository
+5. Add environment variables:
+   - `SUPABASE_URL` = your Supabase URL
+   - `SUPABASE_SECRET_KEY` = your Supabase service role key
+6. Click "Deploy"
+
+### Option 2: Deploy via Vercel CLI
+
+1. Install Vercel CLI:
+```bash
+npm i -g vercel
+```
+
+2. Deploy:
+```bash
+vercel
+```
+
+3. Follow the prompts and add your environment variables when asked
+
+### Environment Variables on Vercel
+
+Make sure to add these in your Vercel project settings:
+- `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
+
+## Project Structure
+
+```
+/app
+  /api
+    /saveFrame
+      route.ts      → Image upload endpoint
+  page.tsx          → Main calibration page
+  layout.tsx        → Root layout
+  globals.css       → Global styles
+
+/lib
+  supabase.ts       → Supabase client config
+```
+
+## License
+
+MIT
