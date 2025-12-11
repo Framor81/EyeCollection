@@ -217,7 +217,7 @@ export default function CalibratePage() {
       // Countdown and capture sequence
       let countdownInterval: NodeJS.Timeout;
       
-      setCountdown(3); // Start countdown at 3 seconds
+      setCountdown(2); // Start countdown at 2 seconds
 
       countdownInterval = setInterval(() => {
         setCountdown((prev) => {
@@ -229,27 +229,27 @@ export default function CalibratePage() {
         });
       }, 1000);
 
-      // After countdown, capture 5 frames
+      // After countdown, capture 3 frames quickly
       setTimeout(async () => {
-        const framesToCapture = 5; // Capture 5 frames per direction
+        const framesToCapture = 3; // Capture 3 frames per direction
         for (let i = 0; i < framesToCapture; i++) {
           await capture(currentLabel);
           setCaptureCount(i + 1);
-          // Small delay between captures
+          // Very short delay between captures (100ms for speed)
           if (i < framesToCapture - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 300));
+            await new Promise((resolve) => setTimeout(resolve, 100));
           }
         }
 
         // Show red flash before changing directions
         setShowRedFlash(true);
         
-        // Move to next direction after red flash (3 seconds)
+        // Move to next direction after red flash (1.5 seconds - faster)
         setTimeout(() => {
           setShowRedFlash(false);
           setStep(step + 1);
-        }, 3000);
-      }, 3000); // Wait 3 seconds for countdown
+        }, 1500);
+      }, 2000); // Wait 2 seconds for countdown
     }
   }, [step, capture]);
 
@@ -361,7 +361,7 @@ export default function CalibratePage() {
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-60">
         <div className="bg-gray-800 rounded-lg p-8 max-w-sm mx-4 text-center shadow-xl border border-gray-700">
           <p className="text-3xl font-semibold mb-4 text-white">
-            {label === "closed" ? "Close your eyes and Count to 5" : `Look ${label}`}
+            {label === "closed" ? "Close your eyes" : `Look ${label}`}
           </p>
           {countdown > 0 && (
             <p className="text-2xl text-blue-400 font-bold mb-2">
@@ -370,7 +370,7 @@ export default function CalibratePage() {
           )}
           {countdown === 0 && captureCount > 0 && (
             <p className="text-lg text-gray-300">
-              Capturing... ({captureCount}/5)
+              Capturing... ({captureCount}/3)
             </p>
           )}
           {countdown === 0 && captureCount === 0 && !showRedFlash && (
