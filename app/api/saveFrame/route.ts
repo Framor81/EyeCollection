@@ -18,7 +18,14 @@ export async function POST(req: NextRequest) {
     const image = form.get("image") as Blob;
     const label = form.get("label") as string;
 
+    console.log("Received upload request:", { 
+      hasImage: !!image, 
+      imageSize: image?.size, 
+      label 
+    });
+
     if (!image || !label) {
+      console.error("Missing image or label:", { hasImage: !!image, label });
       return NextResponse.json(
         { error: "Missing image or label" },
         { status: 400 }
@@ -29,6 +36,10 @@ export async function POST(req: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SECRET_KEY;
 
     if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Supabase config missing:", { 
+        hasUrl: !!supabaseUrl, 
+        hasKey: !!supabaseServiceKey 
+      });
       return NextResponse.json(
         { error: "Supabase configuration missing" },
         { status: 500 }
@@ -42,10 +53,14 @@ export async function POST(req: NextRequest) {
     const timestamp = Date.now();
     const filename = `${userId}/${label}/${timestamp}.jpg`;
 
+    console.log("Uploading to:", filename);
+
     const arrayBuffer = await image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const { error } = await supabase.storage
+    console.log("Buffer size:", buffer.length);
+
+    const { data, error } = await supabase.storage
       .from("calibration")
       .upload(filename, buffer, {
         contentType: "image/jpeg",
@@ -54,14 +69,21 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Supabase upload error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ 
+        error: error.message,
+        details: error 
+      }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, filename });
+    console.log("Upload successful:", data);
+    return NextResponse.json({ success: true, filename, data });
   } catch (error) {
     console.error("Error in saveFrame route:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }
